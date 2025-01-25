@@ -1,34 +1,89 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Slice</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&family=Pixelify+Sans:wght@400..700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        .upper-main{
+            background-image: url("{% static '/images/banner-2021-05-03T101631.414.jpg' %}");
+        } 
+        .up-in-lt-1{
+            background-image: url("{% static '/images/Logo7.png' %}");
+        }
+    </style>
+
+
 </head>
+
 <body>
-    <header>
-        <nav>
-            <div class="logo">YourLogo</div>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
-                <li><a href="{% url 'login_page' %}">Sign In</a></li>
-                <li><a href="{% url 'register_page' %}">Sign Up</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <section class="hero">
-            <h1>Welcome to Our Website</h1>
-            <p>Your website's tagline goes here.</p>
-            <a href="#" class="cta-button">Get Started</a>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2025 Your Company. All rights reserved.</p>
-    </footer>
+    <div class="main-flex">
+
+        <div class="upper-main">
+            <div class="up-in-left">
+                <div class="up-in-lt-1">
+
+                </div>
+                <div class="up-in-lt-2">
+                    <div>
+                        <h1>Track</h1>
+                    </div>
+                    <div>
+                        <h1>Transform</h1>
+                    </div>
+                    <div>
+                        <h1>Thrive</h1><br>
+                    </div>
+                </div>
+                <div class="up-in-lt-3">
+                    <button class="button"><a href="{% url 'login_page' %}" class="buttontext">
+                            <h6>Get Started</h6>
+                        </a></button>
+
+                </div>
+            </div>
+
+
+        </div>
+        <div class="middle">
+            <div class="mid-in">
+                <div class="ques">
+                    <h6>Why choose us?</h6>
+                </div>
+                <div class="paragraphs">
+                    <p>Track your meals, plan your diet, and stay on top of your fitness journey
+                        with a tool that adapts to your unique health needs.<br>
+                        Whether you aim to lose, gain, or maintain weight,
+                        our app offers curated diet plans and food tracking for a healthier, happier you.</p>
+                </div>
+            </div>
+        </div>
+        <div class="lower-main">
+            <div class="low-down">
+                <div class="card">
+                    <h1>Powerful Analytics<br>&<br> Statistics</h1>
+                </div>
+                <div class="card">
+                    <h1>AI<br>Powered Algorithms</h1>
+                </div>
+                <div class="card">
+                    <h1>Personalized<br>Recommendations</h1>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 </body>
+
 </html>

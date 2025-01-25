@@ -1,0 +1,173 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.upper-main {
+    min-width: 80%;
+    height: 60vh;
+    display: flex;
+    flex-direction: row;
+    background-size: cover;
+    background-position: bottom;
+    justify-content: left;
+    align-items: center;
+   
+
+}
+
+.lower-main {
+    height: 30vh;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+
+}
+
+.middle {
+    height: 10vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.up-in-left {
+    flex: 0.5;
+    height: 58vh;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    flex-wrap: wrap;
+}
+
+.up-in-lt-1 {
+    flex: 1;
+    min-width: 150px;
+    height: 50vh;
+    background-size: 200px;
+    background-position: left;
+    background-repeat: no-repeat;
+}
+
+
+.up-in-lt-3 {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    padding-left: 60px;
+}
+
+.up-in-lt-2 {
+    flex: 3;
+    min-width: 150px;
+    height: 50vh;
+    color: white;
+    font-size: 30px;
+    font-family: 'Lexand Deca', sans-serif;
+    text-align: left;
+    padding-left: 50px;
+}
+
+
+
+.low-down {
+    flex: 1;
+    min-width: 200px;
+    max-width: 4096px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    height: 100%;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    padding: 10px 10px 10px 10px;
+
+}
+
+.card {
+    min-width: 300px;
+    max-width: 400px;
+    width: calc(33.33% - 10px);
+    height: 25vh;
+    border: 1px solid slategray;
+    border-radius: 10px;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.4s ease;
+}
+
+.card:hover {
+    transform: scale(1.015);
+    border: 1.8px solid slategray;
+}
+
+.main-flex {
+    min-width: 200px;
+    max-width: 4096px;
+    max-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.button {
+    min-width: 200px;
+    max-height: 50px;
+    border-width: 0;
+    border-radius: 30px;
+    font-size: 30px;
+    font-family: 'Lexand Deca', sans-serif;
+    background-color: white;
+    transition: transform 0.3s ease;
+
+}
+
+.button:hover {
+    transform: scale(1.1);
+}
+
+.buttontext {
+    text-decoration: none;
+    color: slategray
+}
+
+
+.ques {
+    display: flex;
+    justify-content: center;
+    font-size: 30px;
+    font-family: 'Lexand Deca', sans-serif;
+    color: rosybrown;
+    padding-top: 10px;
+}
+
+.paragraphs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 14px;
+    text-align: center;
+    color: slategrey;
+    padding-bottom: 10px;
+}
+
+.card h1 {
+    font-family: 'Lexand Deca', sans-serif;
+    text-align: center;
+    font-size: 25px;
+    color: slategrey;
+}
