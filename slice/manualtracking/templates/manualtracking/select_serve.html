@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Meal</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+        }
+
+        .meal-section {
+            margin-bottom: 20px;
+        }
+
+        input,
+        select {
+            padding: 10px;
+            width: calc(100% - 20px);
+            box-sizing: border-box;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px;
+            width: 100%;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #nutritional-values {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        #nutritional-values p {
+            margin: 5px 0;
+        }
+
+        .chart-container {
+            width: 250px;
+            height: 250px;
+            margin: 0 auto;
+        }
+
+        .selected-food-label {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Edit Meal</h1>
+        <div id="selected-food" class="selected-food-label"></div>
+        <div class="meal-section">
+            <label for="meal-type">Meal Type:</label>
+            <select id="meal-type">
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+                <option value="snacks">Snacks</option>
+                <option value="dinner">Dinner</option>
+            </select>
+        </div>
+        <div class="meal-section">
+            <label for="servings">Number of Servings:</label>
+            <input type="number" id="servings" placeholder="Enter number of servings" min="1"
+                oninput="calculateNutritionalValues()">
+        </div>
+        <div class="meal-section">
+            <label for="serving-size">Serving Size:</label>
+            <select id="serving-size" onchange="updateServingSizeInGrams()">
+                <option value="" disabled selected>Select serving size</option>
+            </select>
+        </div>
+        <button onclick="saveMeal()">Save</button>
+
+        <h2>Nutritional Information</h2>
+        <div class="chart-container">
+            <canvas id="nutritionalChart"></canvas>
+        </div>
+        <div id="nutritional-values">
+            <p>Carbs: <span id="carbs-value">0</span> g</p>
+            <p>Fat: <span id="fat-value">0</span> g</p>
+            <p>Protein: <span id="protein-value">0</span> g</p>
+            <p>Energy: <span id="energy-value">0</span> g</p>
+        </div>
+        {% include 'manualtracking/custom_alert.html' %}
+    </div>
+
+
+    <script>
+        //Just delete the updateNutritionalChart if not needed as it is aldready implemented by front end developers.Used for testing purpose
+        let servingSizeInGrams = 0;
+        let nutritionalChart;
+        //Just use as it is used to handle session and jwt token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+
+
+
+        //Logic of converting updated nutritional value to json file
+        function saveMeal() {
+            const mealType = document.getElementById('meal-type').value;
+            const selectedFood = JSON.parse(sessionStorage.getItem('selectedFood'));
+            const carbsTotal = parseFloat(document.getElementById('carbs-value').textContent);
+            const fatTotal = parseFloat(document.getElementById('fat-value').textContent);
+            const proteinTotal = parseFloat(document.getElementById('protein-value').textContent);
+            const energyTotal = parseFloat(document.getElementById('energy-value').textContent);
+            const servingSizeSelection = document.getElementById('serving-size').value;
+            const servings = parseFloat(document.getElementById('servings').value) || 0;
+
+            if (!servingSizeSelection) {
+                showCustomAlert('Please select a serving size.');
+                return;
+            }
+
+            if (servings <= 0) {
+                showCustomAlert('Please enter a valid number of servings.');
+                return;
+            }
+
+            const mealData = {
+                mealType: mealType,
+                foodName: selectedFood.name,
+                carbs: carbsTotal,
+                fat: fatTotal,
+                protein: proteinTotal,
+                calories: energyTotal
+            };
+
+            console.log(mealData);
+
+            //Sending the json file to django backend view save_meal
+            fetch('/manualtracking/save_meal/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify(mealData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    showCustomAlert('Meal details saved!','/manualtracking/searchpage');
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+
+        //Fetching food details selected in search page
+        function fetchSelectedFoodInfo() {
+            const selectedFood = JSON.parse(sessionStorage.getItem('selectedFood'));
+
+            if (selectedFood) {
+                console.log('Selected food:', selectedFood);
+
+                // Display selected food name in non-editable format
+                document.getElementById('selected-food').textContent = `Selected Food: ${selectedFood.name}`;
+
+                // Update the serving size dropdown
+                const servingSizeDropdown = document.getElementById('serving-size');
+                servingSizeDropdown.innerHTML = '<option value="" disabled selected>Select serving size</option>';
+
+                if (selectedFood.GmWt_Desc1 && selectedFood.GmWt_Desc1 !== 'null') {
+                    servingSizeDropdown.innerHTML += `<option value="1">${selectedFood.GmWt_Desc1}</option>`;
+                }
+
+                if (selectedFood.GmWt_Desc2 && selectedFood.GmWt_Desc2 !== 'null') {
+                    servingSizeDropdown.innerHTML += `<option value="2">${selectedFood.GmWt_Desc2}</option>`;
+                }
+
+                // Update the nutritional values
+                document.getElementById('carbs-value').textContent = selectedFood.carbohydrate;
+                document.getElementById('fat-value').textContent = selectedFood.fat;
+                document.getElementById('protein-value').textContent = selectedFood.protien;
+                document.getElementById('energy-value').textContent = selectedFood.energy;
+
+                // Update the chart
+                updateNutritionalChart(selectedFood.carbohydrate, selectedFood.fat, selectedFood.protien);
+            } else {
+                console.error('No selected food found.');
+            }
+        }
+
+        function updateServingSizeInGrams() {
+            const selectedFood = JSON.parse(sessionStorage.getItem('selectedFood'));
+            const servingSizeSelection = document.getElementById('serving-size').value;
+
+            if (servingSizeSelection === '1') {
+                servingSizeInGrams = selectedFood.GmWt_1;
+            } else if (servingSizeSelection === '2') {
+                servingSizeInGrams = selectedFood.GmWt_2;
+            } else {
+                servingSizeInGrams = 0;
+            }
+            calculateNutritionalValues();
+        }
+
+        function calculateNutritionalValues() {
+            const servings = parseFloat(document.getElementById('servings').value) || 0;
+            const totalQuantityInGrams = servingSizeInGrams * servings;
+
+            console.log(`Total Quantity in Grams: ${totalQuantityInGrams}`);
+
+            const selectedFood = JSON.parse(sessionStorage.getItem('selectedFood'));
+            if (selectedFood) {
+                const carbsTotal = (selectedFood.carbohydrate / servingSizeInGrams) * totalQuantityInGrams;
+                const fatTotal = (selectedFood.fat / servingSizeInGrams) * totalQuantityInGrams;
+                const proteinTotal = (selectedFood.protien / servingSizeInGrams) * totalQuantityInGrams;
+                const energyTotal = (selectedFood.energy / servingSizeInGrams) * totalQuantityInGrams;
+
+                document.getElementById('carbs-value').textContent = carbsTotal.toFixed(2);
+                document.getElementById('fat-value').textContent = fatTotal.toFixed(2);
+                document.getElementById('protein-value').textContent = proteinTotal.toFixed(2);
+                document.getElementById('energy-value').textContent = energyTotal.toFixed(2);
+
+                updateNutritionalChart(carbsTotal, fatTotal, proteinTotal);
+            }
+        }
+
+        function updateNutritionalChart(carbs, fat, protein) {
+            const ctx = document.getElementById('nutritionalChart').getContext('2d');
+
+            if (nutritionalChart) {
+                nutritionalChart.destroy();
+            }
+
+            nutritionalChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Carbs', 'Fat', 'Protein'],
+                    datasets: [{
+                        data: [carbs, fat, protein],
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, 
+                    cutout: '80%',
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            });
+        }
+
+        // Fetch selected food information on page load
+        window.onload = fetchSelectedFoodInfo;
+    </script>
+</body>
+
+</html>
