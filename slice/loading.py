@@ -21,7 +21,7 @@ wb = load_workbook(file_path)
 ws = wb.active
 
 
-for row in ws.iter_rows(min_row=2,max_row=8,values_only=True):
+for row in ws.iter_rows(min_row=2,values_only=True):
     name,energy,protien,carbohydrate,fat,GmWt_1,GmWt_Desc1,GmWt_2,GmWt_Desc2 = row
    
     FoodItemsdb.objects.create(name=name,energy=energy,protien=protien,carbohydrate=carbohydrate,fat=fat,GmWt_1=GmWt_1,GmWt_Desc1=GmWt_Desc1,GmWt_2=GmWt_2,GmWt_Desc2=GmWt_Desc2)
