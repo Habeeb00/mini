@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+    <script src="https://unpkg.com/@trevoreyre/autocomplete-js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@trevoreyre/autocomplete-js/dist/style.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+    
+<body>
+    <div class="container mt-5 pt-5">
+        <div class="col-md-6 mx-auto">
+            <div id="autocomplete" class="autocomplete">
+                <input class="autocomplete-input" placeholder="Search your favourite" aria-label="Search for food">
+                <ul class="autocomplete-result-list"></ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        //Dont change the front end components these are prebuild components and if necessory change colors,size etc..
+        //Logic of autocomplete search in front end
+        new Autocomplete('#autocomplete', {
+            search: input => {
+                console.log("Search input:", input);
+                const url = `/manualtracking/search/?q=${encodeURIComponent(input)}`;
+                return new Promise(resolve => {
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("API response payload:", data.payload);
+                            resolve(data.payload);
+                        })
+                        .catch(error => {
+                            console.error("Error fetching data:", error);
+                            resolve([]);
+                        });
+                });
+            },
+            getResultValue: result => result.name,
+            renderResult: (result, props) => {
+                console.log("Render result:", result);
+                let servingsize1 = result.GmWt_Desc1 ? `Serving Size : ${result.GmWt_Desc1}` : '';
+                let servingsize2 = result.GmWt_Desc2 ? `Serving Size : ${result.GmWt_Desc2}` : '';
+                return `
+                    <li ${props} onclick="selectFood('${result.name}', '${result.GmWt_Desc1}', '${result.GmWt_Desc2}', '${result.carbohydrate}', '${result.protien}', '${result.fat}','${result.energy}','${result.GmWt_1}','${result.GmWt_2}')">
+                        <div class="wiki-title">
+                            Name: ${result.name}<br>
+                            ${servingsize1}<br>
+                            ${servingsize2}
+                        </div>
+                    </li>
+                `;
+            }
+        });
+        // Redirect to the select_serve page with the selected meal and food details
+        function selectFood(name, GmWt_Desc1, GmWt_Desc2, carbohydrate, protien, fat, energy,GmWt_1,GmWt_2) {
+            console.log("Selected food:", name);
+            const foodDetails = {
+                name,
+                GmWt_Desc1,
+                GmWt_Desc2,
+                carbohydrate,
+                protien,
+                fat,
+                energy,
+                GmWt_1,
+                GmWt_2
+            };
+            sessionStorage.setItem('selectedFood', JSON.stringify(foodDetails));
+            window.location.href = '/manualtracking/selectserve';
+        }
+
+    </script>
+</body>
+</html>

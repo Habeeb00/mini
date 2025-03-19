@@ -37,6 +37,7 @@ LOGOUT_REDIRECT_URL = 'securelogin/login/'
 
 INSTALLED_APPS = [
     'securelogin',
+    'manualtracking',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
