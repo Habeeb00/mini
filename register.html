@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Registration Form</title>
+    <script>
+        
+        function firstName() {
+            // Validate first name
+            const firstNameField = document.getElementById("first_name");
+            const stringRegex = /^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/;
+            if (firstNameField.value.trim() === "") {
+                firstNameField.classList.add("is-invalid");
+                document.getElementById("firstNameError").innerText = "First name is required.";
+                isValid = false;
+            } else if (!stringRegex.test(firstNameField.value)) {
+                firstNameField.classList.add("is-invalid");
+                document.getElementById("firstNameError").innerText = "Some special characters like (~!#^`'$|{}<>*) are not allowed.";
+                isValid = false;
+            } else {
+                firstNameField.classList.remove("is-invalid");
+                document.getElementById("firstNameError").innerText = "";
+            }
+        }
+        function lastName(){
+            // Validate last name
+            const stringRegex = /^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/;
+            const lastNameField = document.getElementById("last_name");
+            if (lastNameField.value.trim() === "") {
+                lastNameField.classList.add("is-invalid");
+                document.getElementById("lastNameError").innerText = "Last name is required.";
+                isValid = false;
+            } else if (!stringRegex.test(lastNameField.value)) {
+                lastNameField.classList.add("is-invalid");
+                document.getElementById("lastNameError").innerText = "Some special characters like (~!#^`'$|{}<>*) are not allowed.";
+                isValid = false;
+            } else {
+                lastNameField.classList.remove("is-invalid");
+                document.getElementById("lastNameError").innerText = "";
+            }
+        }
+
+            // Validate email
+       
+        function validateEmail() {
+            const emailField = document.getElementById("email");
+            const email = emailField.value;
+            const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+            if (!emailRegex.test(email)) {
+                emailField.classList.add("is-invalid");
+                document.getElementById("emailError").innerText = "Please enter a valid Email address.";
+            } else {
+                emailField.classList.remove("is-invalid");
+                document.getElementById("emailError").innerText = "";
+            }
+        
+        }
+            
+        
+        
+    
+    </script>
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Registration form -->
+        <form class="col-6 mx-auto card p-3 shadow-lg" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Registration form heading -->
+            <h1 style="text-align: center;"><span style="color: purple;">Slice</span></h1>
+            <h3>Register</h3>
+            <hr>
+
+            <!-- Display account creation success message -->
+           
+            {% if messages %}
+            <div class="alert alert-primary" role="alert">
+                {% for message in messages %}
+                {{ message }}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- First Name input field -->
+            <div class="form-group">
+                <label for="first_name">First name</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter First name" required oninput="firstName()">
+                <div class="invalid-feedback" id="firstNameError"></div>
+            </div>
+
+            <!-- Last Name input field -->
+            <div class="form-group">
+                <label for="last_name">Last name</label>
+                <input type="text" name="last_name" class="form-control" id="last_name" placeholder="Enter Last name" required oninput="lastName()">
+                <div class="invalid-feedback" id="lastNameError"></div>
+            </div>
+
+            <!-- Username input field -->
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" name="username" id="username" placeholder="Enter Username" required>
+            </div>
+
+            <!-- Email input field with live validation -->
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="text" class="form-control" name="email" id="email" placeholder="Enter email" required oninput="validateEmail()">
+                <div class="invalid-feedback" id="emailError"></div>
+            </div>
+
+            <!-- Password input field -->
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+            </div>
+
+            <!-- Link to login page for users who already have an account -->
+            <p>Already have an account <a href="{% url 'login_page' %}">Login</a></p>
+
+            <!-- Submit button -->
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
